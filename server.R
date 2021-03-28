@@ -11,6 +11,9 @@ library(shiny)
 library(tidyverse)
 library(plotly)
 library(factoextra)
+library(janitor)
+library(DT)
+library(ggdark)
 
 # Mirror the rainbow, so we cycle back and forth smoothly
 colors <- c(normal = "#BABAAE",fighting = "#A75543",flying = "#78A2FF",
@@ -19,6 +22,16 @@ colors <- c(normal = "#BABAAE",fighting = "#A75543",flying = "#78A2FF",
     electric ="#FDE139",psychic ="#FA65B4",ice ="#96F1FF",dragon ="#8673FF",
     dark ="#8D6855",fairy ="#F9AEFF")
 
+
+
+make_card_type = function(title = 'Type',type = 'Grass',id='type1card'){
+    
+
+        div(class="typecard", id=id,
+            div(class="desctype", type)
+        )
+
+}
 
 poke_data <- read.csv('data/all_stats.csv')
 
@@ -37,54 +50,114 @@ shinyServer(function(input, output, session) {
             select(im1)%>%
             pull()
         
-        poke_img <- img(src=poke_img_str[1])
+        poke_img <- img(src=poke_img_str[1],width="100%")
+        
+        
+        poke_id = poke_data%>%
+            filter(name==input$sel1)%>%
+            select(pos)%>%
+            pull()
+        
+        basic_info <- get_usual_info(poke_id[1])
+        color = unname(colors[basic_info$type[1]])
+        color2 = unname(colors[basic_info$type[2]])
+        
+        
+        type_cards <- fillPage(make_card_type(type = basic_info$type[1]),
+                                make_card_type(title = 'Sec Type',type = basic_info$type[2],id='type2card')
+                                )
+        
+        poke_head <- fillPage(
+            fluidRow(column(4,poke_img),
+                     column(2,type_cards),
+                     column(4,DT::dataTableOutput('poke_stats')))
+        )
+        
+        session$sendCustomMessage("background-type", color) ## CALL JS FUNCTION
+        session$sendCustomMessage("background-type2", color2) ## CALL JS FUNCTION
+        
+        
+         
         
         if (rv$page=='green'){
             
             
-            fluidPage(
-                fluidRow(column(6,poke_img))
-            )
             
+            
+            aux <- fluidPage()
+
         } else if (rv$page=='yellow') {
             
-            fluidPage(
-                fluidRow(column(6,poke_img)),
+            aux <- fluidPage(
                 plotOutput('poke_chain')
             )
             
         }else if (rv$page=='black') {
             opts = unique(poke_data$stat)
+            
             features <- selectInput('sel_feats','Select stats for clustering',
                                     choices = opts  ,multiple=TRUE,selected = opts[0:3] )
-            fluidPage(
+            
+            aux <- fluidPage(
                 fluidRow(column(2,features)),
                 fluidRow(column(2,actionButton('runk','Make clusters'))),
                 br(),
-                plotOutput('poke_clusters'),
-                h1('')
+                plotOutput('poke_clusters')
             )
             
         } else {
-            fillPage(
-                fluidRow(column(6,poke_img),
-                         column(6,plotlyOutput('poke_stats'))),
+            aux <- fillPage(
                 plotOutput('poke_compare')
             )
             
         }
         
+        fillPage(poke_head,aux)
         
     })
     
-    output$poke_stats <-renderPlotly({
+    
+    
+    
+    #output$poke_stats <-renderPlotly({
+    output$poke_stats <-DT::renderDataTable({
+        
+        poke_id = poke_data%>%
+            filter(name==input$sel1)%>%
+            select(pos)%>%
+            pull()
+        
+        basic_info <- get_usual_info(poke_id[1])
+        color = unname(colors[basic_info$type[1]])
+        
+        
         p <- poke_data%>%
                 filter(name==input$sel1)%>%
                 ggplot(aes(stat,base_stat,fill=stat))+
                 geom_col()+
-                ggthemes::theme_hc()
+                dark_mode(ggthemes::theme_hc())
         
-        ggplotly(p)
+
+        df <- poke_data%>%
+            filter(name==input$sel1)%>%
+            select(stat,base_stat)%>%
+            rename(name=stat,base=base_stat)
+        
+        DT::datatable(df,rownames = FALSE,options = list(searching = FALSE,
+                                        paging=FALSE,
+                                        info=FALSE,
+                                        initComplete = JS("function(settings, json) {",
+                                                          "$(this.api().table().body()).css({'font-size': '200%'});"
+                                                          ,"$(this.api().table().header()).css({'display': 'none'});",
+                                                          "}")))%>%
+            formatStyle(
+                'base',
+                background = styleColorBar(df$base, color),
+                backgroundRepeat = 'no-repeat',
+                backgroundPosition = 'left'
+            )%>%
+            formatStyle(columns=colnames(df),color=color,background = 'black')
+        
     })
     
     output$poke_compare <-renderPlot({
@@ -100,7 +173,7 @@ shinyServer(function(input, output, session) {
             geom_boxplot()+
             geom_image(data=chain_data,aes(image=im1),size=0.2)+
             facet_wrap(~stat,ncol = 3,scales = 'free_x')+
-            ggthemes::theme_hc()
+            dark_mode(ggthemes::theme_hc())
         
         p
     },height = 800,width = 900)
@@ -116,6 +189,11 @@ shinyServer(function(input, output, session) {
             first()%>%
             as.numeric()
         
+        
+
+        basic_info <- get_usual_info(poke_id)
+        color = unname(colors[basic_info$type[1]])
+        
 
         all_chain_data <- get_chain_info(poke_id)
 
@@ -124,30 +202,16 @@ shinyServer(function(input, output, session) {
 
         p <- all_chain_data%>%
             ggplot(aes(name,base_stat))+
-            geom_col(position = position_dodge(),alpha=0.6)+
+            geom_col(position = position_dodge(),alpha=0.6,fill=color)+
             geom_image(aes(image=im1),size=0.35)+
             facet_wrap(~stat,ncol = 3,scales = 'free_x')+
-            ggthemes::theme_hc()
+            dark_mode(ggthemes::theme_hc())
         
         p
     },height = 800,width = 900)
     
     
-    observe({
-        poke_id = poke_data%>%
-            filter(name==input$sel1)%>%
-            select(pos)%>%
-            pull()
-        
-        basic_info <- get_usual_info(poke_id[1])
-        color = unname(colors[basic_info$type[1]])
-        color2 = unname(colors[basic_info$type[2]])
 
-        session$sendCustomMessage("background-color", color)
-
-        session$sendCustomMessage("background-color2", color2)
-        
-    })
     
     observeEvent(input$runk,{
         print('hello')
@@ -217,6 +281,34 @@ shinyServer(function(input, output, session) {
         
         rv$pcluster
     },height = 1000,width = 1500)
+    
+    
+    ### Solve reactivity issues for the background
+    
+    timer <- reactiveTimer(500)
+    
+    
+    observe({
+        
+        timer()
+        poke_id = poke_data%>%
+            filter(name==input$sel1)%>%
+            select(pos)%>%
+            pull()
+        
+        basic_info <- get_usual_info(poke_id[1])
+        color = unname(colors[basic_info$type[1]])
+        color2 = unname(colors[basic_info$type[2]])
+        
+        session$sendCustomMessage("background-type", color) ## CALL JS FUNCTION
+        if (color2==color){
+            print(1782)
+            session$sendCustomMessage("hide-type2",color) ## CALL JS FUNCTION    
+        }
+        session$sendCustomMessage("background-type2", color2) ## CALL JS FUNCTION
+        
+        
+    })
 
 
 

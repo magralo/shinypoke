@@ -76,6 +76,26 @@ body {
   width: 100%;
 }
 
+.typecard{
+
+  background: black;
+
+}
+
+.h6{
+  
+  color:white;
+}
+
+.desctype{
+
+  font-size: 300%;
+  text-align: center;
+  font-family: "Trirong", serif;
+  font-weight: bold;
+
+}
+
 .main-section__white {
   background: #DEDEDE;
   border: 3px solid black;
@@ -105,6 +125,19 @@ body {
   width: calc(100%);
 
 }
+
+
+
+.typecard:hover {
+  box-shadow: inset 0 0 2px 2px rgba(0,0,0,.3);
+}
+
+.typecard:active {
+  box-shadow: inset 0 0 2px 2px rgba(0,0,0,.3);
+}
+
+
+
 
 .main-screen {
   border-radius: 15px;
