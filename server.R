@@ -588,6 +588,11 @@ shinyServer(function(input, output, session) {
         }
         
     })
+    
+    observe({
+      print(input$crycount)
+      session$sendCustomMessage("playcrie", paste0('cries/',rv$poke_id,'.ogg')) ## CALL JS FUNCTION
+    })
 
 
 

@@ -4,6 +4,8 @@ var pagecount = 1;
 
 var pokeidcount = 1;
 
+var crycount = 1;
+
 
 
 
@@ -30,6 +32,24 @@ function downbut(id){
 }
 
 
+/// cries
+
+
+Shiny.addCustomMessageHandler('playcrie', function(crie) {
+  var audio = document.createElement('audio');
+  audio.style.display = "none";
+  audio.src = crie;
+  audio.autoplay = true;
+  audio.onended = function(){
+    audio.remove(); //Remove when played.
+  };
+  document.body.appendChild(audio);
+});
+
+function Abut(id){
+  crycount = crycount + 1;
+  Shiny.setInputValue('crycount', crycount);
+}
 
 
 

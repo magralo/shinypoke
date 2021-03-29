@@ -1,0 +1,12 @@
+name: shinypoke
+title: shinypoke
+username:
+account: mateodii
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3881960
+bundleId: 4409409
+url: https://mateodii.shinyapps.io/shinypoke/
+when: 1617057586.90303
+asMultiple: FALSE
+asStatic: FALSE

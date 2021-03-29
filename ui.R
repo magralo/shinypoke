@@ -23,9 +23,9 @@ pokedex_base <- function(...){
               div( class="left-container__top-section",
                    div( class="top-section__blue"),
                    div( class="top-section__small-buttons",
-                        div(class="top-section__red",onclick="upred(this)"),
-                        div(class="top-section__yellow",onclick="upyellow(this)"),
-                        div(class="top-section__green",onclick="upgreen(this)")
+                        div(class="top-section__red"),
+                        div(class="top-section__yellow"),
+                        div(class="top-section__green")
                    )
               ),
               div(class="left-container__main-section-container",
@@ -46,8 +46,8 @@ pokedex_base <- function(...){
                           div(class="d-pad__cell bottom",onclick="downbut(this)")
                        ),
                       div(class="controllers__buttons",
-                          div(class="buttons__button", 'B'),
-                          div(class="buttons__button", 'A')
+                          div(class="buttons__button", 'B',onclick="Bbut(this)"),
+                          div(class="buttons__button", 'A',onclick="Abut(this)")
                       )
                       
                   )      
