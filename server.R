@@ -310,7 +310,7 @@ shinyServer(function(input, output, session) {
             aux <- fluidPage(actionButton('getloc','Get location'),
                              h6('This is simulated data, i hope i can get real pokemon data in the future.',
                                 style = "color: white;"),
-                             leafletOutput('sim_map'))
+                             leafletOutput('sim_map',height = 900,width = 900))
             
         } else if (page==5) {
             
@@ -437,7 +437,7 @@ shinyServer(function(input, output, session) {
             
             rv$poke_map <-leaflet(data) %>% 
                 addProviderTiles(providers$OpenStreetMap) %>%
-                setView(lng = user_lon, lat = user_lat, zoom = 15)%>% addTiles() %>%
+                setView(lng = user_lon, lat = user_lat, zoom = 14)%>% addTiles() %>%
                 addHeatmap(
                     lng = ~longs, lat = ~lats, intensity = 1,
                     blur = 20, max = 0.05, radius = 15
