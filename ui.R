@@ -14,6 +14,7 @@ library(tidyverse)
 
 
 ##https://www.youtube.com/watch?v=wXjSaZb67n8&ab_channel=JustinKim
+#https://github.com/angle943/pokedex
 
 pokedex_base <- function(...){
     
@@ -24,8 +25,7 @@ pokedex_base <- function(...){
                    div( class="top-section__small-buttons",
                         div(class="top-section__red",onclick="upred(this)"),
                         div(class="top-section__yellow",onclick="upyellow(this)"),
-                        div(class="top-section__green",onclick="upgreen(this)"),
-                        div(class="top-section__black",onclick="upblack(this)")
+                        div(class="top-section__green",onclick="upgreen(this)")
                    )
               ),
               div(class="left-container__main-section-container",
@@ -36,7 +36,21 @@ pokedex_base <- function(...){
                            ),
                            
                       )
-                  )
+                  ),
+                  div(class="left-container__controllers",
+                      div(class="controllers__d-pad",
+                          div(class="d-pad__cell top",onclick="upbut(this)"),
+                          div(class="d-pad__cell left",onclick="leftbut(this)"),
+                          div(class="d-pad__cell middle"),
+                          div(class="d-pad__cell right",onclick="rightbut(this)"),
+                          div(class="d-pad__cell bottom",onclick="downbut(this)")
+                       ),
+                      div(class="controllers__buttons",
+                          div(class="buttons__button", 'B'),
+                          div(class="buttons__button", 'A')
+                      )
+                      
+                  )      
               )
          )
     )
