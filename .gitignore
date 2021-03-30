@@ -37,3 +37,12 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+
+### Keys
+
+key.json
+
+### anything from images
+
+tf/images/*.jpg
