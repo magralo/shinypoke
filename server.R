@@ -47,10 +47,10 @@ shinyServer(function(input, output, session) {
     
     rv <- reactiveValues() ### Auxiliar for all plots of a given pokemon
     rv2 <- reactiveValues() ### Auxiliar for all plots of a given pokemon
+    rvpred <- reactiveValues()
     ## The only plot that is not made with this reactivity is the kmeans plot
     
     observe({
-        
         #### DELETE prev data
         rv$pcluster = NULL
         rv$chain_plot = NULL
@@ -318,10 +318,96 @@ shinyServer(function(input, output, session) {
                 selectInput('sel2','Select rival your pokemon',choices = poke_names),
                 uiOutput('poke_head2')
             )
+        } else if (page==6){
+          
+          loadimage <- fileInput("poke_upload", "Choose pokemon image",
+                                 multiple = FALSE,
+                                 accept = c("jpg"))
+          
+          aux <- fluidPage(loadimage,
+                           actionButton('getpred','Whos dat'),
+                           uiOutput('poke_predui')
+                           #plotOutput('poke_predictions')
+                           ) 
+          
         }
         
-        fillPage(poke_head,aux)
+        if (page==6){
+          aux
+        }else{
+          fillPage(poke_head,aux)
+        }
         
+        
+    })
+    
+    output$poke_predui <- renderUI({
+      fillRow(imageOutput("userImage",width = "100"),
+               plotOutput('poke_predictions')
+               )      
+    })
+    
+    output$userImage <- renderImage({
+      list(src = input$poke_upload$datapath,
+           alt = "Image failed to render")
+    }, deleteFile = FALSE)
+    
+    observeEvent(input$getpred,{
+      
+      
+      if (!is.null(input$poke_upload$datapath)){
+        
+        preds = poke_prediction(input$poke_upload$datapath)%>%
+          inner_join(poke_data,by=c('label'='name'))%>%
+          filter(stat=='hp')%>%
+          select(label,pos,prob,im1)%>%
+          arrange(-prob)%>%
+          rename(name=label)%>%
+          mutate(size = ifelse(prob==max(prob),0.3,0.2))
+        
+        poke_pred<- head(preds$name,1)
+        
+        maxy= preds$prob%>%max()+0.1
+        
+        rvpred$plot <- preds%>%
+          mutate(name=forcats::as_factor(name))%>%
+          ggplot(aes(name,prob))+
+          geom_col(alpha=0.6)+
+          geom_image(aes(image=im1),size=preds$size)+
+          expand_limits(y = c(-0.1, maxy))+
+          dark_mode(ggthemes::theme_hc())+
+          theme(axis.title.x=element_blank())
+        
+        rvpred$poke_pred<- poke_pred
+        
+        updateVarSelectInput(session,"sel1",selected = poke_pred)
+        
+        
+
+        poke_id = poke_data%>%
+          filter(name==input$sel1)%>%
+          select(pos)%>%
+          pull()%>%
+          first()
+        
+        rv$poke_id <-poke_id
+        basic_info = get_usual_info(poke_id[1])
+        rv$basic_info <- basic_info
+        
+        color = unname(colors[basic_info$type[1]])
+        rv$color = color
+        
+        color2 = unname(colors[basic_info$type[2]])
+        rv$color2 = color2
+        
+        session$sendCustomMessage("background-type", color) ## CALL JS FUNCTION
+        if (color2==color){
+          session$sendCustomMessage("hide-type2",color) ## CALL JS FUNCTION    
+        }
+        session$sendCustomMessage("background-type2", color2) ## CALL JS FUNCTION
+        
+      } 
+      
     })
     
 
@@ -330,6 +416,13 @@ shinyServer(function(input, output, session) {
         rv$stats_table
         
     })
+    
+    
+    output$poke_predictions <-renderPlot({
+      
+      rvpred$plot
+      
+    },height = 800,width = 900)
     
     output$poke_compare <-renderPlot({
         

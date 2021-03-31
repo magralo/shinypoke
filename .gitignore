@@ -45,4 +45,14 @@ key.json
 
 ### anything from images
 
+tf/*.jpg
+
 tf/images/*.jpg
+
+tf/base/*.jpg
+
+*.jpg
+
+### No trained model
+
+tf/my_inception_tf.model/*

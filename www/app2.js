@@ -15,7 +15,7 @@ function leftbut(id){
 }
 
 function rightbut(id){
-  pagecount = Math.min(pagecount + 1,5);
+  pagecount = Math.min(pagecount + 1,7);
   Shiny.setInputValue('page_count', pagecount);
 }
 
