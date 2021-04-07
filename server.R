@@ -357,18 +357,37 @@ shinyServer(function(input, output, session) {
       
       if (!is.null(input$poke_upload$datapath)){
         
-        preds = poke_prediction(input$poke_upload$datapath)%>%
+        
+        
+        
+        proj <- Sys.getenv("GCS_PROJ")
+        
+        image <- paste0(nrow(googleCloudStorageR::gcs_list_objects()),'-',round(runif(1)*1000),'.jpg')
+        
+        gcs_upload(input$poke_upload$datapath,name=image,predefinedAcl = "bucketLevel")
+        
+
+        
+        url <- paste0("https://pokeguess-wa34i3z7oq-uc.a.run.app/guess/",image)
+        
+        res = GET(url)
+        
+        poke_prediction <- fromJSON(rawToChar(res$content))
+        
+        
+        #preds = poke_prediction(input$poke_upload$datapath)%>% #using python
+        preds = poke_prediction%>% #using python
           inner_join(poke_data,by=c('label'='name'))%>%
           filter(stat=='hp')%>%
           select(label,pos,prob,im1)%>%
           arrange(-prob)%>%
           rename(name=label)%>%
           mutate(size = ifelse(prob==max(prob),0.3,0.2))
-        
+
         poke_pred<- head(preds$name,1)
-        
+
         maxy= preds$prob%>%max()+0.1
-        
+
         rvpred$plot <- preds%>%
           mutate(name=forcats::as_factor(name))%>%
           ggplot(aes(name,prob))+
@@ -377,8 +396,12 @@ shinyServer(function(input, output, session) {
           expand_limits(y = c(-0.1, maxy))+
           dark_mode(ggthemes::theme_hc())+
           theme(axis.title.x=element_blank())
-        
+
         rvpred$poke_pred<- poke_pred
+        
+        
+        
+        
         
         updateVarSelectInput(session,"sel1",selected = poke_pred)
         

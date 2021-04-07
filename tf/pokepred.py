@@ -10,20 +10,19 @@ import numpy as np
 import pandas as pd
 
 import tensorflow as tf
-gpus = tf.config.list_physical_devices('GPU')
-tf.config.experimental.set_virtual_device_configuration(
-        gpus[0],
-        [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=1000)])
+#gpus = tf.config.list_physical_devices('GPU')
+#tf.config.experimental.set_virtual_device_configuration(
+#        gpus[0],
+#        [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=1000)])
         
 
         
         
 ### All the same for each prediction
 model = load_model('tf/my_inception_tf.model')
-labels = ['blastoise','bulbasaur','charizard','charmander','charmeleon','chikorita','cyndaquil',
-     'gengar','groudon','ivysaur','kyogre','latios','machop','metagross','mew','mewtwo','mightyena',
-     'milotic','mudkip','pikachu','rayquaza','salamence','squirtle','torchic','totodile','treecko',
-     'venusaur','wartortle']
+labels = ['bulbasaur','charmander','chikorita','cyndaquil',
+     'gengar','groudon','kyogre','latios','machop','metagross','mew','mewtwo','mightyena',
+     'milotic','mudkip','pikachu','rayquaza','salamence','squirtle','torchic','totodile','treecko']
 WIDTH = 2**8
 HEIGHT = 2**8
 

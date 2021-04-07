@@ -43,6 +43,8 @@ vignettes/*.pdf
 
 key.json
 
+auth.json
+
 ### anything from images
 
 tf/*.jpg
