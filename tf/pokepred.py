@@ -19,7 +19,7 @@ import tensorflow as tf
         
         
 ### All the same for each prediction
-model = load_model('tf/my_inception_tf.model')
+model = load_model('tf/my_model.h5')
 labels = ['bulbasaur','charmander','chikorita','cyndaquil',
      'gengar','groudon','kyogre','latios','machop','metagross','mew','mewtwo','mightyena',
      'milotic','mudkip','pikachu','rayquaza','salamence','squirtle','torchic','totodile','treecko']
