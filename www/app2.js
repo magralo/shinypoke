@@ -6,6 +6,8 @@ var pokeidcount = 1;
 
 var crycount = 1;
 
+var maxpage = 4;
+
 
 
 
@@ -15,7 +17,7 @@ function leftbut(id){
 }
 
 function rightbut(id){
-  pagecount = Math.min(pagecount + 1,7);
+  pagecount = Math.min(pagecount + 1,maxpage);
   Shiny.setInputValue('page_count', pagecount);
 }
 
@@ -30,6 +32,30 @@ function downbut(id){
   Shiny.setInputValue('id_count', pokeidcount);
   Shiny.setInputValue('updown_but', 'down');
 }
+
+
+function homebut(id){
+  pokeidcount = 1;
+  Shiny.setInputValue('page_count', 1);
+}
+
+function clusterbut(id){
+  pokeidcount = 3;
+  Shiny.setInputValue('page_count', 3);
+}
+
+
+
+function chainbut(id){
+  pokeidcount = 2;
+  Shiny.setInputValue('page_count', 2);
+}
+
+function rivalbut(id){
+  pokeidcount = 5;
+  Shiny.setInputValue('page_count', 4);
+}
+
 
 
 /// cries
@@ -80,8 +106,6 @@ Shiny.addCustomMessageHandler('hide-type2', function(color) {
 
 
 
-
-
 Shiny.addCustomMessageHandler('update_location', function(x) {
 
 
@@ -129,5 +153,9 @@ Shiny.addCustomMessageHandler('hide-type2-rival', function(color) {
   document.getElementById('type2card2').style.display = "none";
 
 });
-    
+
+
+
+
+
     

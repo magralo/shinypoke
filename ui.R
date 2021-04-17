@@ -10,6 +10,7 @@
 #
 
 library(tidyverse)
+library(shinyalert)
 
 
 
@@ -50,6 +51,16 @@ pokedex_base <- function(...){
                           div(class="buttons__button", 'A',onclick="Abut(this)")
                       )
                       
+                  ), 
+                  div(class="controllers_page-pad",
+                      div(class="lowspace"),
+                      div(class="low-container__controllers",
+                          div(class="buttons__page", 'Home',onclick="homebut(this)"),
+                          div(class="buttons__page", 'Chain',onclick="chainbut(this)"),
+                          div(class="buttons__page", 'Clusters',onclick="clusterbut(this)"),
+                          div(class="buttons__page", 'Rival',onclick="rivalbut(this)")
+                      ),
+                      div(class="lowspace")
                   )      
               )
          )
@@ -67,10 +78,12 @@ poke_names <- read.csv('data/all_stats.csv')%>%
 ui <- fillPage(
     includeCSS("www/style.css"),
     includeScript(path = "www/app2.js"),
+    useShinyalert(), 
     pokedex_base(
         fluidPage(
             selectInput('sel1','Select your pokemon',choices = poke_names),
-            uiOutput('poke_info_1')
+            
+            uiOutput('poke_info_1'),id='allpokeinfo'
         )
     )
 )
