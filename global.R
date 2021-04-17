@@ -35,6 +35,7 @@ library(leaflet.extras)
 library(httr)
 library(jsonlite)
 library(shinyalert)
+library(reticulate)
 
 
 # Mirror the rainbow, so we cycle back and forth smoothly
@@ -61,3 +62,12 @@ poke_names <- poke_data%>%
   select(name)%>%
   pull()%>%
   unique()
+
+
+
+if(!file.exists('auth.json')){
+  virtualenv_create(envname = "python_environment", python= "python3")
+  virtualenv_install("python_environment", packages = c('keras', 'pandas','numpy','scipy','scikit-learn', 'tensorflow-cpu','pillow'))
+  reticulate::use_virtualenv("python_environment", required = TRUE)
+  source_python("tf/pokepred.py")
+}

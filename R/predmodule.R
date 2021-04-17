@@ -3,12 +3,12 @@
 predUI <- function(id) {
   
   loadimage <- fileInput(NS(id,"poke_upload"), "Choose pokemon image",
-                                 multiple = FALSE,
-                                 accept = c("jpg"))
+                         multiple = FALSE,
+                         accept = c("jpg"))
   
   fluidPage(loadimage,
-                   actionButton(NS(id,'getpred'),'Whos dat'),
-                   uiOutput(NS(id,'poke_predui'))
+            actionButton(NS(id,'getpred'),'Whos dat'),
+            uiOutput(NS(id,'poke_predui'))
   )
   
 }
@@ -16,8 +16,8 @@ predUI <- function(id) {
 
 
 predServer <- function(id,poke_data) {
-
-
+  
+  
   moduleServer(id, function(input, output, session) {
     
     rvpred <- reactiveValues(file = 'none')
@@ -39,7 +39,7 @@ predServer <- function(id,poke_data) {
     }, deleteFile = FALSE)
     
     observeEvent(input$getpred,{
-    print('QHUBO')
+      print('QHUBO')
       
       if (!is.null(input$poke_upload$datapath)){
         
@@ -57,35 +57,48 @@ predServer <- function(id,poke_data) {
           
           proj <- Sys.getenv("GCS_PROJ")
           
-          image <- paste0(nrow(googleCloudStorageR::gcs_list_objects()),'-',round(runif(1)*1000),'.jpg')
           
-          print('uploading')
-          gcs_upload(input$poke_upload$datapath,name=image,predefinedAcl = "bucketLevel")
-          print('uploaded')
-          #gcs_upload('sample_images/groudon2.jpg',name=image,predefinedAcl = "bucketLevel")
-          
-          print('requesting')
-          print(Sys.time())
-          
-          
-          url <- paste0(Sys.getenv("pokeapi"),image)
-          
-          res = GET(url)
-          
-          print('ok')
-          print(Sys.time())
-          
-          poke_prediction <- fromJSON(rawToChar(res$content))
-          
-          print(poke_prediction)
-          #preds = poke_prediction(input$poke_upload$datapath)%>% #using python
-          preds = poke_prediction%>% #using python
-            inner_join(poke_data(),by=c('label'='name'))%>%
-            filter(stat=='hp')%>%
-            select(label,pos,prob,im1)%>%
-            arrange(-prob)%>%
-            rename(name=label)%>%
-            mutate(size = ifelse(prob==max(prob),0.3,0.2))
+          if(file.exists('auth.json')){
+            image <- paste0(nrow(googleCloudStorageR::gcs_list_objects()),'-',round(runif(1)*1000),'.jpg')
+            
+            print('uploading')
+            gcs_upload(input$poke_upload$datapath,name=image,predefinedAcl = "bucketLevel")
+            print('uploaded')
+            #gcs_upload('sample_images/groudon2.jpg',name=image,predefinedAcl = "bucketLevel")
+            
+            print('requesting')
+            print(Sys.time())
+            
+            
+            url <- paste0(Sys.getenv("pokeapi"),image)
+            
+            res = GET(url)
+            
+            print('ok')
+            print(Sys.time())
+            
+            poke_prediction <- fromJSON(rawToChar(res$content))
+            
+            print(poke_prediction)
+            #preds = poke_prediction(input$poke_upload$datapath)%>% #using python
+            preds = poke_prediction%>% #using python
+              inner_join(poke_data(),by=c('label'='name'))%>%
+              filter(stat=='hp')%>%
+              select(label,pos,prob,im1)%>%
+              arrange(-prob)%>%
+              rename(name=label)%>%
+              mutate(size = ifelse(prob==max(prob),0.3,0.2))
+          }else{
+            
+            preds = poke_prediction(input$poke_upload$datapath)%>% #using python
+              inner_join(poke_data(),by=c('label'='name'))%>%
+              filter(stat=='hp')%>%
+              select(label,pos,prob,im1)%>%
+              arrange(-prob)%>%
+              rename(name=label)%>%
+              mutate(size = ifelse(prob==max(prob),0.3,0.2))
+            
+          }
           
           poke_pred<- head(preds$name,1)
           
