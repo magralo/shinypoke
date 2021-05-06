@@ -6,7 +6,7 @@ predUI <- function(id) {
                          multiple = FALSE,
                          accept = c("jpg"))
   
-  fluidPage(loadimage,
+  fluidPage(loadimage,h4('When you upload the image in shinyapps for this demo i will save it in a google storage bucket... I will not use the image for any other purpose'),
             actionButton(NS(id,'getpred'),'Whos dat'),
             uiOutput(NS(id,'poke_predui'))
   )
@@ -49,7 +49,7 @@ predServer <- function(id,poke_data) {
         
         if(rvpred$file != input$poke_upload$datapath){
           
-          shinyalert(title = "Running! make take a while", type = "warning")
+          shinyalert(title = "Running! may take a while", type = "warning")
           
           
           
