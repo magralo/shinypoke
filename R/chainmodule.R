@@ -8,14 +8,16 @@ chainUI <- function(id) {
 }
 
 
-chainServer <- function(id,poke_id,color,color2) {
+chainServer <- function(id,poke_id,color,color2,getancho) {
   stopifnot(is.reactive(poke_id))
   stopifnot(is.reactive(color))
   stopifnot(is.reactive(color2))
 
   
   moduleServer(id, function(input, output, session) {
+    
 
+    
     chaindata <- eventReactive(input$runmodule,{
       
       get_chain_info(poke_id())
@@ -24,7 +26,7 @@ chainServer <- function(id,poke_id,color,color2) {
     })
     
     output$poke_chain <-renderPlot({
-      
+      print(getancho())
       if (!is.null(chaindata())){
         all_chain_data  <- chaindata()
         
@@ -50,7 +52,7 @@ chainServer <- function(id,poke_id,color,color2) {
       
       
       
-    },width = ancho * 0.6, height = ancho * 0.3)
+    },width =  function() getancho() * 0.6, height = function() getancho() * 0.3)
     
     
     reactive({

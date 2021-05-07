@@ -12,7 +12,7 @@ fightUI <- function(id) {
 }
 
 
-fightServer <- function(id,poke_data,color_poke1,stats_poke1) {
+fightServer <- function(id,poke_data,color_poke1,stats_poke1,getancho) {
   
   
   moduleServer(id, function(input, output, session) {
@@ -160,7 +160,7 @@ fightServer <- function(id,poke_data,color_poke1,stats_poke1) {
       rv2$plot
       
       
-    },width = ancho * 0.6, height = ancho * 0.3)
+    },width =  function() getancho() * 0.6, height = function() getancho() * 0.3)
     
     
     ### Solve reactivity issues for the background

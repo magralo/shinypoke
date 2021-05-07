@@ -60,7 +60,7 @@ poke_names <- poke_data%>%
   pull()%>%
   unique()
 
-#ancho <- 1000
+
 
 if(!file.exists('auth.json')){
   virtualenv_create(envname = "python_environment", python= "python3")

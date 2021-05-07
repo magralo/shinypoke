@@ -19,7 +19,7 @@ clusterUI <- function(id) {
 }
 
 
-clusterServer <- function(id,pokemon) {
+clusterServer <- function(id,pokemon,getancho) {
   
   
   moduleServer(id, function(input, output, session) {
@@ -32,7 +32,7 @@ clusterServer <- function(id,pokemon) {
       
       #all_chain_data <- get_chain_info(poke_id)
       print('cluster')
-      print(ancho)
+
       all_chain_names <- get_chain_info(pokemon())%>%
         select(name)%>%
         pull()%>%
@@ -97,7 +97,7 @@ clusterServer <- function(id,pokemon) {
     output$poke_clusters <- renderPlot({
       
       rv$pcluster
-    },width = ancho * 0.6, height = ancho * 0.3)
+    },width =  function() getancho() * 0.6, height = function() getancho() * 0.3)
     
     
     

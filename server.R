@@ -196,6 +196,9 @@ shinyServer(function(input, output, session) {
         
         
     })
+
+    
+    
     ### Stats table
     output$poke_stats <-DT::renderDataTable({
       
@@ -203,19 +206,22 @@ shinyServer(function(input, output, session) {
       
     })
     
+    ### ancho
+    get_ancho <- reactive({input$dimension[1]})
+    
     
     ### Chain plot 
     get_id <- reactive({rv$poke_id})
     get_color <- reactive({rv$color})
     get_color2 <- reactive({rv$color2})
     ### We must pass the id (pokedex number) and colors for the graphs
-    chainServer("chain",poke_id=get_id,color=get_color,color2=get_color2) 
+    chainServer("chain",poke_id=get_id,color=get_color,color2=get_color2,getancho=get_ancho) 
     
     
     ### Prediction Module
     
     get_data <- reactive({poke_data})
-    prediction=predServer("pred",poke_data=get_data)
+    prediction=predServer("pred",poke_data=get_data,getancho=get_ancho)
     
     observe({### After we get the prediction we update the selected pokemon
      # print(prediction())
@@ -226,7 +232,7 @@ shinyServer(function(input, output, session) {
     ### Fight module
     
     get_stats1 <- reactive({rv$poke_stats})
-    fightServer("fight",poke_data=get_data,get_color,get_stats1)
+    fightServer("fight",poke_data=get_data,get_color,get_stats1,getancho=get_ancho)
     
     observe({### After we get the prediction we update the selected pokemon
       updateVarSelectInput(session,"sel1",selected = prediction())
@@ -235,7 +241,7 @@ shinyServer(function(input, output, session) {
     
     ### cluster module
 
-    clusterServer("cluster",pokemon=get_id)
+    clusterServer("cluster",pokemon=get_id,getancho=get_ancho)
     
 
     
@@ -258,7 +264,9 @@ shinyServer(function(input, output, session) {
         timer()
 
         
-        ancho <<- input$dimension[1] # total width
+
+        
+        
         
         color = rv$color
         color2 = rv$color2

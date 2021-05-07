@@ -15,7 +15,7 @@ predUI <- function(id) {
 
 
 
-predServer <- function(id,poke_data) {
+predServer <- function(id,poke_data,getancho) {
   
   
   moduleServer(id, function(input, output, session) {
@@ -143,7 +143,7 @@ predServer <- function(id,poke_data) {
       print(Sys.time())
       rvpred$plot
       
-    },width = ancho * 0.3, height = ancho * 0.3)
+    },width =  function() getancho() * 0.6, height = function() getancho() * 0.3)
     
     
     
