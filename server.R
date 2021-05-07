@@ -257,6 +257,9 @@ shinyServer(function(input, output, session) {
         
         timer()
 
+        
+        ancho <<- input$dimension[1] # total width
+        
         color = rv$color
         color2 = rv$color2
         

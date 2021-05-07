@@ -50,7 +50,7 @@ chainServer <- function(id,poke_id,color,color2) {
       
       
       
-    })
+    },width = ancho * 0.6, height = ancho * 0.3)
     
     
     reactive({

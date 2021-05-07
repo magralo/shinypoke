@@ -160,7 +160,7 @@ fightServer <- function(id,poke_data,color_poke1,stats_poke1) {
       rv2$plot
       
       
-    })
+    },width = ancho * 0.6, height = ancho * 0.3)
     
     
     ### Solve reactivity issues for the background

@@ -25,7 +25,7 @@ predServer <- function(id,poke_data) {
     output$poke_predui <- renderUI({
       if (!is.null(input$poke_upload$datapath)){
         fluidRow(column(3,imageOutput(NS(id,"userImage"))),
-                 column(4,plotOutput(NS(id,'poke_predictions'),width = "50%"))
+                 column(4,plotOutput(NS(id,'poke_predictions')))
         )
       }else {
         fluidPage()
@@ -71,6 +71,7 @@ predServer <- function(id,poke_data) {
             
             
             url <- paste0(Sys.getenv("pokeapi"),image)
+            print(url)
             
             res = GET(url)
             
@@ -142,7 +143,7 @@ predServer <- function(id,poke_data) {
       print(Sys.time())
       rvpred$plot
       
-    })
+    },width = ancho * 0.3, height = ancho * 0.3)
     
     
     

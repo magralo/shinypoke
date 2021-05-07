@@ -8,7 +8,7 @@ var crycount = 1;
 
 var maxpage = 4;
 
-
+var dimension = [0, 0];
 
 
 function leftbut(id){
@@ -155,6 +155,20 @@ Shiny.addCustomMessageHandler('hide-type2-rival', function(color) {
 });
 
 
+//// get sizes
+
+
+
+$(document).on("shiny:connected", function(e) {
+    dimension[0] = window.innerWidth;
+    dimension[1] = window.innerHeight;
+    Shiny.onInputChange("dimension", dimension);
+});
+$(window).resize(function(e) {
+    dimension[0] = window.innerWidth;
+    dimension[1] = window.innerHeight;
+    Shiny.onInputChange("dimension", dimension);
+});
 
 
 

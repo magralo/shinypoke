@@ -5,8 +5,8 @@ account: mateodii
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3881960
-bundleId: 4482883
+bundleId: 4563275
 url: https://mateodii.shinyapps.io/shinypoke/
-when: 1618639968.64795
+when: 1620269888.07662
 asMultiple: FALSE
 asStatic: FALSE

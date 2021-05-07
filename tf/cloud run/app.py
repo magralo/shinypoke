@@ -15,13 +15,13 @@ import tensorflow as tf
 
 from google.cloud import storage
 
-
-        
+proj_id = "directed-asset-312701"
+bucket_name =   'poke-images2'      
 ### All the same for each prediction
 
-storage_client = storage.Client("PROJECT")
+storage_client = storage.Client(proj_id)
 # Create a bucket object for our bucket
-bucket = storage_client.get_bucket('BUCKET')
+bucket = storage_client.get_bucket(bucket_name)
 # Create a blob object from the filepath
 blob = bucket.blob('my_model.h5')
 # Download the file to a destination
@@ -36,7 +36,7 @@ labels = ['bulbasaur','charmander','chikorita','cyndaquil',
      'milotic','mudkip','pikachu','rayquaza','salamence','squirtle','torchic','totodile','treecko']
 WIDTH = 2**8
 HEIGHT = 2**8
-
+#os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'auth.json'
 
 
 app = Flask(__name__)
@@ -45,9 +45,9 @@ app = Flask(__name__)
 
 @app.route("/guess/<file>", methods=["GET"])
 def hello_name(file):
-    storage_client = storage.Client("gentle-analyst-307101")
+    storage_client = storage.Client(proj_id)
     # Create a bucket object for our bucket
-    bucket = storage_client.get_bucket('poke-images')
+    bucket = storage_client.get_bucket(bucket_name)
     # Create a blob object from the filepath
     blob = bucket.blob(file)
     # Download the file to a destination

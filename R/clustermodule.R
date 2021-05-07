@@ -13,7 +13,7 @@ clusterUI <- function(id) {
     fluidRow(column(2,features)),
     fluidRow(column(2,actionButton(NS(id,'runk'),'Make clusters'))),
     br(),
-    plotOutput(NS(id,'poke_clusters'))
+    plotOutput(NS(id,'poke_clusters'),width = "80%")
   )
   
 }
@@ -32,6 +32,7 @@ clusterServer <- function(id,pokemon) {
       
       #all_chain_data <- get_chain_info(poke_id)
       print('cluster')
+      print(ancho)
       all_chain_names <- get_chain_info(pokemon())%>%
         select(name)%>%
         pull()%>%
@@ -39,12 +40,17 @@ clusterServer <- function(id,pokemon) {
       
       print('ok chain')
       
+      if (length(input$sel_feats)>1){
+        stats <- poke_data%>%
+          select(stat,base_stat,name,im1)%>%
+          filter(stat%in%input$sel_feats)%>%
+          pivot_wider(names_from = stat,values_from=base_stat)%>%
+          clean_names()
+      }else{
+        shinyalert(title = "Select at least 2 features", type = "warning")
+        return()
+      }
       
-      stats <- poke_data%>%
-        select(stat,base_stat,name,im1)%>%
-        filter(stat%in%input$sel_feats)%>%
-        pivot_wider(names_from = stat,values_from=base_stat)%>%
-        clean_names()
       
       print('ok stats')
       
@@ -91,7 +97,7 @@ clusterServer <- function(id,pokemon) {
     output$poke_clusters <- renderPlot({
       
       rv$pcluster
-    })
+    },width = ancho * 0.6, height = ancho * 0.3)
     
     
     
